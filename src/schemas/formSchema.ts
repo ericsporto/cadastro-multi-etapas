@@ -22,7 +22,7 @@ export const professionalDataSchema = z.object({
 });
 
 export const fullFormSchema = personalDataSchema
-  .merge(addressDataSchema)
-  .merge(professionalDataSchema);
+  .extend(addressDataSchema.shape)
+  .extend(professionalDataSchema.shape);
 
-export type FormData = z.infer<typeof fullFormSchema>;
+export type FullFormData = z.infer<typeof fullFormSchema>;
