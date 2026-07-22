@@ -2,8 +2,6 @@
 
 Aplicação web desenvolvida com **React**, **TypeScript**, **Tailwind CSS**, **Zustand**, **React Hook Form** e **Zod**. A aplicação conta com busca automática de CEP mockada, mascaramento de campos em tempo real, validação estrita de esquemas e exportação do resumo em PDF.
 
-🚀 **[Acesse a aplicação ao vivo aqui](https://seu-usuario.github.io/cadastro-multi-etapas/)**
-
 ---
 
 ## 🛠️ Tecnologias Utilizadas
