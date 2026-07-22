@@ -19,6 +19,7 @@ export const Step2Address: React.FC = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         label="CEP"
+        autoComplete="postal-code"
         placeholder="00000-000"
         error={errors.cep?.message}
         helperText={loadingCEP ? 'Buscando endereço via serviço de CEP...' : ''}
@@ -32,6 +33,7 @@ export const Step2Address: React.FC = () => {
 
       <Input
         label="Endereço"
+        autoComplete="address"
         placeholder="Rua, Avenida, etc."
         error={errors.street?.message}
         required
@@ -41,6 +43,7 @@ export const Step2Address: React.FC = () => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Bairro"
+          autoComplete="neighborhood"
           placeholder="Seu bairro"
           error={errors.neighborhood?.message}
           required
@@ -51,6 +54,7 @@ export const Step2Address: React.FC = () => {
           <div className="col-span-2">
             <Input
               label="Cidade"
+              autoComplete="city"
               placeholder="Cidade"
               error={errors.city?.message}
               required
@@ -59,6 +63,7 @@ export const Step2Address: React.FC = () => {
           </div>
           <Input
             label="UF"
+            autoComplete="state"
             placeholder="SP"
             maxLength={2}
             error={errors.state?.message}

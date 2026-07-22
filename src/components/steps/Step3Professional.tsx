@@ -61,6 +61,7 @@ export const Step3Professional: React.FC = () => {
 
       <Input
         label="Empresa"
+        autoComplete="organization"
         placeholder="Nome da empresa"
         error={errors.company?.message}
         required
@@ -69,6 +70,7 @@ export const Step3Professional: React.FC = () => {
 
       <Input
         label="Salário Mensal"
+        autoComplete="amount"
         placeholder="R$ 0,00"
         error={errors.salary?.message}
         required

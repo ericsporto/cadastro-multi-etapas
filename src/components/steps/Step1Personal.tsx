@@ -14,6 +14,7 @@ export const Step1Personal: React.FC = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         label="Nome Completo"
+        autoComplete="name"
         placeholder="Ex: João da Silva"
         error={errors.fullName?.message}
         required
@@ -22,6 +23,7 @@ export const Step1Personal: React.FC = () => {
 
       <Input
         label="Data de Nascimento"
+        autoComplete="birth-date"
         type="date"
         error={errors.birthDate?.message}
         required
@@ -31,6 +33,7 @@ export const Step1Personal: React.FC = () => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="CPF"
+          autoComplete="cpf"
           placeholder="000.000.000-00"
           error={errors.cpf?.message}
           required
@@ -43,6 +46,7 @@ export const Step1Personal: React.FC = () => {
 
         <Input
           label="Telefone"
+          autoComplete="tel"
           placeholder="(00) 00000-0000"
           error={errors.phone?.message}
           required

@@ -12,13 +12,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+        <label
+          htmlFor={inputId}
+          className="text-xs font-semibold uppercase tracking-wider text-zinc-300"
+        >
           {label} {props.required && <span className="text-purple-400">*</span>}
         </label>
 
         <input
           id={inputId}
           ref={ref}
+          aria-invalid={!!error}
+          aria-describedby={error ? id : undefined}
           className={`
             w-full px-4 py-3 rounded-xl text-sm font-medium
             bg-brand-muted text-zinc-100 placeholder:text-zinc-500
