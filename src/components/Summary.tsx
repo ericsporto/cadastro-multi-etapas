@@ -1,28 +1,15 @@
 import React from 'react';
 import { useFormStore } from '../store/useFormStore';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Download, RotateCcw } from 'lucide-react';
 import { Button } from './ui/Button';
+import { formatDate } from '../utils/formatDate';
 
 export const Summary: React.FC = () => {
   const { formData, resetForm } = useFormStore();
 
-  const exportToPDF = async () => {
-    const element = document.getElementById('summary-content');
-    if (!element) return;
-
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-    });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 190;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    pdf.save(`resumo-cadastro-${Date.now()}.pdf`);
+  const handleExport = async () => {
+    const { exportToPDF } = await import('../utils/exportToPDF');
+    await exportToPDF();
   };
 
   return (
@@ -51,7 +38,9 @@ export const Summary: React.FC = () => {
             </p>
             <p>
               <span className="text-zinc-400">Nascimento:</span>{' '}
-              <strong className="text-white">{formData.birthDate}</strong>
+              <strong className="text-white">
+                {formatDate(formData.birthDate)}
+              </strong>
             </p>
             <p>
               <span className="text-zinc-400">CPF:</span>{' '}
@@ -110,7 +99,7 @@ export const Summary: React.FC = () => {
       <div className="flex flex-col sm:flex-row gap-3 pt-2">
         <Button
           type="button"
-          onClick={exportToPDF}
+          onClick={handleExport}
           className="flex-1 flex items-center justify-center gap-2"
         >
           <Download className="w-4 h-4" /> Exportar em PDF

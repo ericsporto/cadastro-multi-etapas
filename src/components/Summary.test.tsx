@@ -1,39 +1,28 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Summary } from './Summary';
 import { useFormStore } from '../store/useFormStore';
-import html2canvas from 'html2canvas';
+import { exportToPDF } from '../utils/exportToPDF';
 
 vi.mock('../store/useFormStore');
-vi.mock('html2canvas', () => ({
-  default: vi.fn(),
-}));
-vi.mock('jspdf', () => {
-  const mockPDFInstance = {
-    addImage: vi.fn(),
-    save: vi.fn(),
-  };
-  return {
-    default: vi.fn(() => mockPDFInstance),
-  };
-});
+vi.mock('../utils/exportToPDF');
 
 describe('Summary Component', () => {
   const mockResetForm = vi.fn();
+
   const mockFormData = {
-    fullName: 'John Doe',
-    birthDate: '1990-01-01',
+    fullName: 'Ana Silva',
+    birthDate: '1995-05-20',
     cpf: '123.456.789-00',
     phone: '(11) 99999-9999',
-    street: 'Av. Paulista, 1000',
-    neighborhood: 'Bela Vista',
-    cep: '01310-100',
+    street: 'Rua das Flores, 123',
+    neighborhood: 'Centro',
+    cep: '01000-000',
     city: 'São Paulo',
     state: 'SP',
-    profession: 'Software Engineer',
+    profession: 'Desenvolvedora',
     company: 'Tech Corp',
-    salary: 'R$ 10.000,00',
+    salary: 'R$ 8.000,00',
   };
 
   beforeEach(() => {
@@ -42,39 +31,40 @@ describe('Summary Component', () => {
     vi.mocked(useFormStore).mockReturnValue({
       formData: mockFormData,
       resetForm: mockResetForm,
-    } as ReturnType<typeof useFormStore>);
-
-    vi.mocked(html2canvas).mockResolvedValue({
-      height: 1000,
-      width: 800,
-      toDataURL: vi.fn().mockReturnValue('data:image/png;base64,fake-data'),
-    } as unknown as HTMLCanvasElement);
+    } as unknown as ReturnType<typeof useFormStore>);
   });
 
-  it('must render all form data correctly from store', () => {
+  it('should render all form summary data correctly including formatted date', () => {
     render(<Summary />);
 
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('1990-01-01')).toBeInTheDocument();
+    expect(screen.getByText('Resumo das Informações')).toBeInTheDocument();
+    expect(screen.getByText('Ana Silva')).toBeInTheDocument();
+    expect(screen.getByText('20/05/1995')).toBeInTheDocument();
     expect(screen.getByText('123.456.789-00')).toBeInTheDocument();
     expect(screen.getByText('(11) 99999-9999')).toBeInTheDocument();
-
-    expect(screen.getByText('Av. Paulista, 1000')).toBeInTheDocument();
-    expect(screen.getByText('Bela Vista')).toBeInTheDocument();
-    expect(screen.getByText('01310-100')).toBeInTheDocument();
+    expect(screen.getByText('Rua das Flores, 123')).toBeInTheDocument();
+    expect(screen.getByText('Centro')).toBeInTheDocument();
+    expect(screen.getByText('01000-000')).toBeInTheDocument();
     expect(screen.getByText('São Paulo / SP')).toBeInTheDocument();
-
-    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
+    expect(screen.getByText('Desenvolvedora')).toBeInTheDocument();
     expect(screen.getByText('Tech Corp')).toBeInTheDocument();
-    expect(screen.getByText('R$ 10.000,00')).toBeInTheDocument();
+    expect(screen.getByText('R$ 8.000,00')).toBeInTheDocument();
   });
 
-  it('must call resetForm when clicking on Novo Cadastro button', async () => {
-    const user = userEvent.setup();
+  it('should call exportToPDF utility when clicking export button', () => {
     render(<Summary />);
 
-    const resetButton = screen.getByRole('button', { name: /Novo Cadastro/i });
-    await user.click(resetButton);
+    const exportBtn = screen.getByRole('button', { name: /exportar em pdf/i });
+    fireEvent.click(exportBtn);
+
+    expect(exportToPDF).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call resetForm when clicking new registration button', () => {
+    render(<Summary />);
+
+    const resetBtn = screen.getByRole('button', { name: /novo cadastro/i });
+    fireEvent.click(resetBtn);
 
     expect(mockResetForm).toHaveBeenCalledTimes(1);
   });

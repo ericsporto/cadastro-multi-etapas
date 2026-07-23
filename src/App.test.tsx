@@ -1,121 +1,51 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import App from './App';
-import { useFormStore } from './store/useFormStore';
+import { App } from './App';
+import { useStepForm } from './hooks/useStepForm';
 
-vi.mock('./store/useFormStore');
+vi.mock('./hooks/useStepForm');
 
-vi.mock('./components/ui/StepIndicator', () => ({
-  StepIndicator: ({
-    currentStep,
-    steps,
-  }: {
-    currentStep: number;
-    steps: string[];
-  }) => (
-    <div data-testid="step-indicator">
-      <span>Step: {currentStep}</span>
-      <span>Steps Count: {steps.length}</span>
-    </div>
-  ),
-}));
-
-vi.mock('./components/steps/Step1Personal', () => ({
-  Step1Personal: () => <div data-testid="step-1-personal">Step 1 Component</div>,
-}));
-
-vi.mock('./components/steps/Step2Address', () => ({
-  Step2Address: () => <div data-testid="step-2-address">Step 2 Component</div>,
-}));
-
-vi.mock('./components/steps/Step3Professional', () => ({
-  Step3Professional: () => (
-    <div data-testid="step-3-professional">Step 3 Component</div>
-  ),
-}));
-
-vi.mock('./components/Summary', () => ({
-  Summary: () => <div data-testid="summary-component">Summary Component</div>,
-}));
+const MockCurrentStep: React.FC = () => (
+  <div data-testid="mock-step-component">Conteúdo da Etapa</div>
+);
 
 describe('App Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useStepForm).mockReturnValue({
+      step: 1,
+      stepTitles: ['Dados Pessoais', 'Endereço', 'Profissional', 'Resumo'],
+      CurrentStepComponent: MockCurrentStep as unknown as React.LazyExoticComponent<React.FC>,
+    });
   });
 
-  it('must render application header and main titles correctly', () => {
-    vi.mocked(useFormStore).mockReturnValue({ step: 1 } as ReturnType<
-      typeof useFormStore
-    >);
-
+  it('should render page header and layout correctly', () => {
     render(<App />);
 
     expect(screen.getByText('Processo Seletivo')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { level: 1, name: /Cadastro de Candidato/i })
+      screen.getByRole('heading', { level: 1, name: 'Cadastro de Candidato' })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Preencha os dados nas etapas abaixo para finalizar a sua aplicação'
-      )
+      screen.getByText(/preencha os dados nas etapas abaixo/i)
     ).toBeInTheDocument();
   });
 
-  it('must render Step1Personal when current step is 1', () => {
-    vi.mocked(useFormStore).mockReturnValue({ step: 1 } as ReturnType<
-      typeof useFormStore
-    >);
-
+  it('should render current step component provided by useStepForm', () => {
     render(<App />);
 
-    expect(screen.getByTestId('step-1-personal')).toBeInTheDocument();
-    expect(screen.queryByTestId('step-2-address')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('step-3-professional')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('summary-component')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mock-step-component')).toBeInTheDocument();
+    expect(screen.getByText('Conteúdo da Etapa')).toBeInTheDocument();
   });
 
-  it('must render Step2Address when current step is 2', () => {
-    vi.mocked(useFormStore).mockReturnValue({ step: 2 } as ReturnType<
-      typeof useFormStore
-    >);
-
+  it('should pass correct props to StepIndicator', () => {
     render(<App />);
 
-    expect(screen.getByTestId('step-2-address')).toBeInTheDocument();
-    expect(screen.queryByTestId('step-1-personal')).not.toBeInTheDocument();
-  });
-
-  it('must render Step3Professional when current step is 3', () => {
-    vi.mocked(useFormStore).mockReturnValue({ step: 3 } as ReturnType<
-      typeof useFormStore
-    >);
-
-    render(<App />);
-
-    expect(screen.getByTestId('step-3-professional')).toBeInTheDocument();
-    expect(screen.queryByTestId('step-1-personal')).not.toBeInTheDocument();
-  });
-
-  it('must render Summary component when current step is 4', () => {
-    vi.mocked(useFormStore).mockReturnValue({ step: 4 } as ReturnType<
-      typeof useFormStore
-    >);
-
-    render(<App />);
-
-    expect(screen.getByTestId('summary-component')).toBeInTheDocument();
-    expect(screen.queryByTestId('step-1-personal')).not.toBeInTheDocument();
-  });
-
-  it('must pass correct step number and titles array to StepIndicator component', () => {
-    vi.mocked(useFormStore).mockReturnValue({ step: 2 } as ReturnType<
-      typeof useFormStore
-    >);
-
-    render(<App />);
-
-    const stepIndicator = screen.getByTestId('step-indicator');
-    expect(stepIndicator).toHaveTextContent('Step: 2');
-    expect(stepIndicator).toHaveTextContent('Steps Count: 4');
+    // Verifica se os títulos passados via hook são refletidos no indicador
+    expect(screen.getByText('Dados Pessoais')).toBeInTheDocument();
+    expect(screen.getByText('Endereço')).toBeInTheDocument();
+    expect(screen.getByText('Profissional')).toBeInTheDocument();
+    expect(screen.getByText('Resumo')).toBeInTheDocument();
   });
 });

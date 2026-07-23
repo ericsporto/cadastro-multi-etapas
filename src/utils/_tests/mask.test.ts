@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { maskCPF, maskPhone, maskCEP, maskCurrency } from './masks';
+import { maskCPF, maskPhone, maskCEP, maskCurrency } from '../masks';
 
 describe('Mask Utilities', () => {
   describe('maskCPF', () => {

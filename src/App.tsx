@@ -1,14 +1,11 @@
-import React from 'react';
-import { useFormStore } from './store/useFormStore';
+// src/App.tsx
+import React, { Suspense } from 'react';
+import { useStepForm } from './hooks/useStepForm';
 import { StepIndicator } from './components/ui/StepIndicator';
-import { Step1Personal } from './components/steps/Step1Personal';
-import { Step2Address } from './components/steps/Step2Address';
-import { Step3Professional } from './components/steps/Step3Professional';
-import { Summary } from './components/Summary';
+import { StepSkeleton } from './components/ui/StepSkeleton';
 
 export const App: React.FC = () => {
-  const { step } = useFormStore();
-  const stepTitles = ['Dados Pessoais', 'Endereço', 'Profissional', 'Resumo'];
+  const { step, stepTitles, CurrentStepComponent } = useStepForm();
 
   return (
     <main className="min-h-screen bg-brand-bg text-zinc-100 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
@@ -31,10 +28,9 @@ export const App: React.FC = () => {
         <StepIndicator currentStep={step} steps={stepTitles} />
 
         <div className="mt-6">
-          {step === 1 && <Step1Personal />}
-          {step === 2 && <Step2Address />}
-          {step === 3 && <Step3Professional />}
-          {step === 4 && <Summary />}
+          <Suspense fallback={<StepSkeleton />}>
+            <CurrentStepComponent />
+          </Suspense>
         </div>
       </div>
     </main>
